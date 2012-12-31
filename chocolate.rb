@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'omniauth-runkeeper'
-
+load 'auth.rb' # Create a file with Environment variables that store your Runkeeper keys.
 
 class SinatraApp < Sinatra::Base
   configure do
@@ -9,7 +9,7 @@ class SinatraApp < Sinatra::Base
     # register Sinatra::Flash
   end
   use OmniAuth::Builder do
-    provider :runkeeper, 'ca1cad429d9d4635b10e9f78d26b7d91', '5d1e07030c0640aa80795221c84193ac'
+    provider :runkeeper, ENV['CLIENT_ID'], ENV['CLIENT_SECRET']
     #provider :att, 'client_id', 'client_secret', :callback_url => (ENV['BASE_DOMAIN']
   end
   
@@ -20,7 +20,7 @@ class SinatraApp < Sinatra::Base
       "
     else
       erb "
-      <p>Sup?</p>
+      <%= @user %>
       "
     end
   end
@@ -31,8 +31,7 @@ class SinatraApp < Sinatra::Base
   end
   
   get '/auth/:provider/callback' do
-    @@user = request.env['omniauth.auth']["info"]["nickname"]
-    erb "<p>Hello #{request.env['omniauth.auth']["info"]["nickname"]} <a href='/logout'>Logout</a></p>"
+    erb "<%= request.env['omniauth.auth'] %>"
 
     # Twitter.configure do |config|
       # config.consumer_key = 'akZeVLUrNqzdDkev9Luo6g'
@@ -41,7 +40,7 @@ class SinatraApp < Sinatra::Base
       # config.oauth_token_secret = request.env["omniauth.auth"]["credentials"]["secret"]
     # end
     session[:authenticated] = true
-    redirect "/"
+    # redirect "/"
         # <pre>#{JSON.pretty_generate(request.env['omniauth.auth'])}</pre>
   end
   
