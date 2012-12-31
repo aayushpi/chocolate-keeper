@@ -31,17 +31,9 @@ class SinatraApp < Sinatra::Base
   end
   
   get '/auth/:provider/callback' do
-    erb "<%= request.env['omniauth.auth'] %>"
-
-    # Twitter.configure do |config|
-      # config.consumer_key = 'akZeVLUrNqzdDkev9Luo6g'
-      # config.consumer_secret = '7t7hd4OMUiMzU3xl6K8Z3TMojJXnpHtJWAP7Sw2a8wM'
-      # config.oauth_token = request.env["omniauth.auth"]["credentials"]["token"]
-      # config.oauth_token_secret = request.env["omniauth.auth"]["credentials"]["secret"]
-    # end
-    session[:authenticated] = true
+    @token = request.env["omniauth.auth"]["extra"]["raw_info"]["medium_picture"]
+    erb'<img src="<%= @token %>"/>'
     # redirect "/"
-        # <pre>#{JSON.pretty_generate(request.env['omniauth.auth'])}</pre>
   end
   
   get '/auth/failure' do
