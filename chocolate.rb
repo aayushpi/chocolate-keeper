@@ -19,9 +19,8 @@ class SinatraApp < Sinatra::Base
       <a href='http://localhost:4567/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
-      erb "
-      <%= @user %>
-      "
+      erb'<img src="<%= session[:profile]  %>"/>'
+      # erb '<p>sup?</p>'
     end
   end
   
@@ -31,9 +30,9 @@ class SinatraApp < Sinatra::Base
   end
   
   get '/auth/:provider/callback' do
-    @token = request.env["omniauth.auth"]["extra"]["raw_info"]["medium_picture"]
-    erb'<img src="<%= @token %>"/>'
-    # redirect "/"
+    session[:authenticated] = true
+    session[:profile] = request.env["omniauth.auth"]["extra"]["raw_info"]["medium_picture"]
+    redirect "/"
   end
   
   get '/auth/failure' do
