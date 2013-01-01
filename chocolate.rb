@@ -20,18 +20,17 @@ class SinatraApp < Sinatra::Base
       <a href='http://localhost:4567/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
-      uri               = URI('http://api.runkeeper.com/fitnessActivities')
-      params            = { :access_token => session[:token] }
-      uri.query         = URI.encode_www_form(params)
-      res               = Net::HTTP.get_response(uri)
-      session[:activity] = JSON.parse res.body
-      puts session[:activity][:items]
+      uri                 = URI('http://api.runkeeper.com/fitnessActivities')
+      params              = { :access_token => session[:token] }
+      uri.query           = URI.encode_www_form(params)
+      res                 = Net::HTTP.get_response(uri)
+      session[:activity]  = JSON.parse res.body
       erb'
-      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
+      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Duration</th>
-          <th>Distance</th>
+          <th>Distance(km)</th>
           <th>Date</th>
           <th>Time</th>
           <th>Type</th>
@@ -41,9 +40,9 @@ class SinatraApp < Sinatra::Base
       <tbody>
       <% session[:activity]["items"].each do |item| %>
         <tr>
-          <th><%= item["duration"] %></th>
-          <th><%= item["total_distance"] %></th>
-          <th><%= item["start_time"] %></th>          
+          <th><%= Time.at(item["duration"]).gmtime.strftime("%R:%S")%></th>
+          <th><%= (item["total_distance"]/1000) %></th>
+          <th><%= DateTime.parse(item["start_time"]).strftime("%a %d %b %Y") %></th>
           <th><%= item["start_time"] %></th>
           <th><%= item["type"] %></th>
           <th><a href="<%= item["uri"] %>">Details</a></th>
@@ -51,6 +50,21 @@ class SinatraApp < Sinatra::Base
       <% end %>
       </tbody>
       </table>
+      '
+    end
+  end
+
+  get '/json' do
+    if session[:authenticated]
+      erb '
+      <%= session[:activity]["items"] %>
+      <!-- <h1><%= (DateTime.parse(session[:activity]["items"][0]["start_time"]) - 5).strftime("%d %m %Y") %></h1> -->
+      <% if (DateTime.now - 6).strftime("%d %m %Y") == (DateTime.parse(session[:activity]["items"][0]["start_time"]) - 5).strftime("%d %m %Y") %>
+      <%= puts "You ran" %>
+      <% else %>
+      <%= (DateTime.now - 6).strftime("%d %m %Y") %>
+      <%= (DateTime.parse(session[:activity]["items"][0]["start_time"]) - 5).strftime("%d %m %Y") %>
+      <% end %>
       '
     end
   end
@@ -98,4 +112,3 @@ __END__
     </div>
   </body>
 </html>
-
