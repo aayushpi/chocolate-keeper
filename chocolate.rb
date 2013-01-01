@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'json'
 require 'omniauth-runkeeper'
 load 'auth.rb' # Create a file with Environment variables that store your Runkeeper keys.
 
@@ -19,27 +20,44 @@ class SinatraApp < Sinatra::Base
       <a href='http://localhost:4567/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
-      # erb'<img src="<%= session[:profile]  %>"/>'
-      # erb '<p>sup?</p>'
-      uri = URI('http://api.runkeeper.com/fitnessActivities')
-      params = { :access_token => session[:token]}
-      uri.query = URI.encode_www_form(params)
-
-      res = Net::HTTP.get_response(uri)
-      puts res.body if res.is_a?(Net::HTTPSuccess)
-      session[:activity] = res.body
-      erb'<p> <%= session[:activity] %> </p>'
+      uri               = URI('http://api.runkeeper.com/fitnessActivities')
+      params            = { :access_token => session[:token] }
+      uri.query         = URI.encode_www_form(params)
+      res               = Net::HTTP.get_response(uri)
+      session[:activity] = JSON.parse res.body
+      puts session[:activity][:items]
+      erb'
+      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
+      <thead>
+        <tr>
+          <th>Duration</th>
+          <th>Distance</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% session[:activity]["items"].each do |item| %>
+        <tr>
+          <th><%= item["duration"] %></th>
+          <th><%= item["total_distance"] %></th>
+          <th><%= item["start_time"] %></th>          
+          <th><%= item["start_time"] %></th>
+          <th><%= item["type"] %></th>
+          <th><a href="<%= item["uri"] %>">Details</a></th>
+        </tr>
+      <% end %>
+      </tbody>
+      </table>
+      '
     end
-  end
-  
-  post '/' do
-    # flash.now[:notice] = "You can stop rolling your own now."
-    redirect "/"
   end
   
   get '/auth/:provider/callback' do
     session[:authenticated] = true
-    session[:token] = request.env["omniauth.auth"]["credentials"]["token"]
+    session[:token]         = request.env["omniauth.auth"]["credentials"]["token"]
     redirect "/"
   end
   
