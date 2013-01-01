@@ -19,8 +19,16 @@ class SinatraApp < Sinatra::Base
       <a href='http://localhost:4567/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
-      erb'<img src="<%= session[:profile]  %>"/>'
+      # erb'<img src="<%= session[:profile]  %>"/>'
       # erb '<p>sup?</p>'
+      uri = URI('http://api.runkeeper.com/fitnessActivities')
+      params = { :access_token => session[:token]}
+      uri.query = URI.encode_www_form(params)
+
+      res = Net::HTTP.get_response(uri)
+      puts res.body if res.is_a?(Net::HTTPSuccess)
+      session[:activity] = res.body
+      erb'<p> <%= session[:activity] %> </p>'
     end
   end
   
@@ -31,7 +39,7 @@ class SinatraApp < Sinatra::Base
   
   get '/auth/:provider/callback' do
     session[:authenticated] = true
-    session[:profile] = request.env["omniauth.auth"]["extra"]["raw_info"]["medium_picture"]
+    session[:token] = request.env["omniauth.auth"]["credentials"]["token"]
     redirect "/"
   end
   
