@@ -1,17 +1,23 @@
 require 'sinatra'
 require 'json'
 require 'omniauth-runkeeper'
+require 'faraday'
 load 'auth.rb' # Create a file with Environment variables that store your Runkeeper keys.
 
 class SinatraApp < Sinatra::Base
   configure do
     set :sessions, true
     set :inline_templates, true
-    # register Sinatra::Flash
   end
   use OmniAuth::Builder do
     provider :runkeeper, ENV['CLIENT_ID'], ENV['CLIENT_SECRET']
     #provider :att, 'client_id', 'client_secret', :callback_url => (ENV['BASE_DOMAIN']
+  end
+
+  conn = Faraday.new(:url => 'http://api.runkeeper.com') do |faraday|
+    faraday.request  :url_encoded             # form-encode POST params
+    faraday.response :logger                  # log requests to STDOUT
+    faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
   end
   
   get '/' do
