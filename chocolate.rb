@@ -2,7 +2,6 @@ require 'sinatra'
 require 'json'
 require 'omniauth-runkeeper'
 require 'faraday'
-load 'auth.rb' # Create a file with Environment variables that store your Runkeeper keys.
 
 class SinatraApp < Sinatra::Base
   configure do
