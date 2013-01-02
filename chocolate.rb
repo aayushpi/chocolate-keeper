@@ -26,11 +26,18 @@ class SinatraApp < Sinatra::Base
       <a href='http://localhost:4567/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
-      uri                 = URI('http://api.runkeeper.com/fitnessActivities')
-      params              = { :access_token => session[:token] }
-      uri.query           = URI.encode_www_form(params)
-      res                 = Net::HTTP.get_response(uri)
-      session[:activity]  = JSON.parse res.body
+      # uri                 = URI('http://api.runkeeper.com/fitnessActivities')
+      # params              = { :access_token => session[:token] }
+      # uri.query           = URI.encode_www_form(params)
+      # res                 = Net::HTTP.get_response(uri)
+      # session[:activity]  = JSON.parse res.body
+      # conn.request_headers['access_token'] = session[:token]
+      puts session[:token]
+
+      session[:activity]    = conn.get '/fitnessActivities', { :access_token => session[:token] }
+       # req.headers= {'access_token' => session[:token]}
+      # end
+      session[:activity] = JSON.parse session[:activity].body
       erb'
       <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
       <thead>
@@ -51,13 +58,18 @@ class SinatraApp < Sinatra::Base
           <th><%= DateTime.parse(item["start_time"]).strftime("%a %d %b %Y") %></th>
           <th><%= item["start_time"] %></th>
           <th><%= item["type"] %></th>
-          <th><a href="<%= item["uri"] %>">Details</a></th>
+          <th><a href="http://localhost:4567<%= item["uri"] %>">Details</a></th>
         </tr>
       <% end %>
       </tbody>
       </table>
       '
     end
+  end
+
+  get '/fitnessActivities/:id' do
+      session[:activity]    = conn.get "/fitnessActivities/#{params[:id]}", { :access_token => session[:token],  }    
+      erb'<%= session[:activity].body %>'
   end
 
   get '/json' do
