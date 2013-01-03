@@ -44,5 +44,5 @@ DEPENDENCIES
   faraday
   json
   omniauth-runkeeper
-  sinatra (= 1.1.0)
+  sinatra
   thin

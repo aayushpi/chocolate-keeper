@@ -22,7 +22,7 @@ class SinatraApp < Sinatra::Base
   get '/' do
     if session[:authenticated] != true
       erb "
-      <a href='http://localhost:4567/auth/runkeeper'>Login with Runkeeper</a>
+      <a href='/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
       # uri                 = URI('http://api.runkeeper.com/fitnessActivities')

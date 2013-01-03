@@ -1,4 +1,2 @@
 .DS_Store
-auth.rb
-auth.env
-
+.env
