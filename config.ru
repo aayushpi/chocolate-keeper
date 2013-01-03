@@ -1,2 +1,2 @@
-require './chocolate.rb'
+require './chocolate'
 run Sinatra::Application
