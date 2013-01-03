@@ -1,1 +1,2 @@
-web: bundle exec ruby chocolate.rb -p $PORT
+echo: "web: bundle exec rails server thin -p \$PORT -e \$RACK_ENV" > Procfile
+
