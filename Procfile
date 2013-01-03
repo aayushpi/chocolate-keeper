@@ -1,4 +1,4 @@
-web: bundle exec ruby server thin web.rb -p $PORT
+web: bundle exec ruby server thin chocolate.rb -p $PORT
 
 
 
