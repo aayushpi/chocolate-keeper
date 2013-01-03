@@ -1,3 +1,4 @@
-echo: "web: bundle exec rails server thin -p \$PORT -e \$RACK_ENV" > Procfile
+web: bundle exec ruby server thin web.rb -p $PORT
+
 
 
