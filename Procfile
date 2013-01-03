@@ -1,1 +1,1 @@
-web: bundle exec ruby chocolate.rb -p $PORT
+web: bundle exec ruby chocolate.rb -p port=$PORT
