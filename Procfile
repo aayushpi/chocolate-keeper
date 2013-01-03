@@ -1,4 +1,3 @@
-web: bundle exec ruby server thin chocolate.rb -p $PORT
-
+web: bundle exec rails server thin -p $PORT -e $RACK_ENV
 
 
