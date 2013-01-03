@@ -1,1 +1,1 @@
-web: bundle exec thin chocolate.rb -p =$PORT
+web: bundle exec thin chocolate.rb -p $PORT
