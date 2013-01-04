@@ -4,7 +4,6 @@ require 'json'
 require 'omniauth-runkeeper'
 require 'faraday'
 
-class SinatraApp < Sinatra::Base
   configure do
     set :sessions, true
     set :inline_templates, true
@@ -86,7 +85,6 @@ class SinatraApp < Sinatra::Base
     session[:authenticated] = false
     redirect '/'
   end
-end
 
 __END__
 
