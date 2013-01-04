@@ -1,3 +1,3 @@
-web: bundle exec thin -R config.ru -p $PORT
+web: bundle exec thin start -R config.ru -p $PORT
 
 
