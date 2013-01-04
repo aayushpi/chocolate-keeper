@@ -19,26 +19,27 @@ require 'faraday'
     faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
   end
   
+  get '/logout' do
+    session[:authenticated] = false
+    redirect '/'
+  end
+
   get '/' do
     if session[:authenticated] != true
       erb "
       <a href='/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
-      # uri                 = URI('http://api.runkeeper.com/fitnessActivities')
-      # params              = { :access_token => session[:token] }
-      # uri.query           = URI.encode_www_form(params)
-      # res                 = Net::HTTP.get_response(uri)
-      # session[:activity]  = JSON.parse res.body
-      # conn.request_headers['access_token'] = session[:token]
-      puts session[:token]
-
       session[:activity]    = conn.get '/fitnessActivities', { :access_token => session[:token] }
-       # req.headers= {'access_token' => session[:token]}
-      # end
-      session[:activity] = JSON.parse session[:activity].body
+      session[:activity]    = JSON.parse session[:activity].body
       erb :activity
     end
+  end
+  
+  get '/auth/:provider/callback' do
+    session[:authenticated] = true
+    session[:token]         = request.env["omniauth.auth"]["credentials"]["token"]
+    redirect "/"
   end
 
   get '/fitnessActivities/:id' do
@@ -50,21 +51,8 @@ require 'faraday'
     if session[:authenticated]
       erb '
       <%= session[:activity]["items"] %>
-      <!-- <h1><%= (DateTime.parse(session[:activity]["items"][0]["start_time"]) - 5).strftime("%d %m %Y") %></h1> -->
-      <% if (DateTime.now - 6).strftime("%d %m %Y") == (DateTime.parse(session[:activity]["items"][0]["start_time"]) - 5).strftime("%d %m %Y") %>
-      <%= puts "You ran" %>
-      <% else %>
-      <%= (DateTime.now - 6).strftime("%d %m %Y") %>
-      <%= (DateTime.parse(session[:activity]["items"][0]["start_time"]) - 5).strftime("%d %m %Y") %>
-      <% end %>
       '
     end
-  end
-  
-  get '/auth/:provider/callback' do
-    session[:authenticated] = true
-    session[:token]         = request.env["omniauth.auth"]["credentials"]["token"]
-    redirect "/"
   end
   
   get '/auth/failure' do
@@ -81,23 +69,8 @@ require 'faraday'
          <a href='/logout'>Logout</a>"
   end
   
-  get '/logout' do
-    session[:authenticated] = false
-    redirect '/'
-  end
+ 
 
 __END__
 
-@@ layout
-<html>
-  <head>
-    <link href='http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css' rel='stylesheet' />
-  </head>
-  <body>
-    <div class='container'>
-      <div class='content'>
-        <%= yield %>
-      </div>
-    </div>
-  </body>
-</html>
+
