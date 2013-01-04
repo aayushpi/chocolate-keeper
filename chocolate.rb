@@ -37,32 +37,7 @@ class SinatraApp < Sinatra::Base
        # req.headers= {'access_token' => session[:token]}
       # end
       session[:activity] = JSON.parse session[:activity].body
-      erb'
-      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Duration</th>
-          <th>Distance(km)</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Type</th>
-          <th>Details</th>
-        </tr>
-      </thead>
-      <tbody>
-      <% session[:activity]["items"].each do |item| %>
-        <tr>
-          <th><%= Time.at(item["duration"]).gmtime.strftime("%R:%S")%></th>
-          <th><%= (item["total_distance"]/1000) %></th>
-          <th><%= DateTime.parse(item["start_time"]).strftime("%a %d %b %Y") %></th>
-          <th><%= item["start_time"] %></th>
-          <th><%= item["type"] %></th>
-          <th><a href="http://localhost:4567<%= item["uri"] %>">Details</a></th>
-        </tr>
-      <% end %>
-      </tbody>
-      </table>
-      '
+      erb :activity
     end
   end
 
@@ -111,8 +86,6 @@ class SinatraApp < Sinatra::Base
     redirect '/'
   end
 end
-
-SinatraApp.run! if __FILE__ == $0
 
 __END__
 
