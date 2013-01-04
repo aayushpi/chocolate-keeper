@@ -1,2 +1,2 @@
-require './chocolate'
+load './chocolate'
 run Sinatra::Application

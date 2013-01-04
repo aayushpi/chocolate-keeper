@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'thin'
 require 'json'
 require 'omniauth-runkeeper'
 require 'faraday'

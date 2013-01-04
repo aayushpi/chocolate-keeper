@@ -1,3 +1,2 @@
-web: bundle exec rackup config.ru -p $PORT
-
+thin -R config.ru -p $PORT
 
