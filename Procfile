@@ -1,2 +1,3 @@
-thin -R config.ru -p $PORT
+web: thin -R config.ru -p $PORT
+
 
