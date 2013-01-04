@@ -17,7 +17,7 @@
       <th><%= DateTime.parse(item["start_time"]).strftime("%a %d %b %Y") %></th>
       <th><%= item["start_time"] %></th>
       <th><%= item["type"] %></th>
-      <th><a href="http://localhost:4567<%= item["uri"] %>">Details</a></th>
+      <th><a href="<%= item["uri"] %>">Details</a></th>
     </tr>
     <% end %>
   </tbody>      
