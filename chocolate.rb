@@ -13,16 +13,11 @@ require 'faraday'
     #provider :att, 'client_id', 'client_secret', :callback_url => (ENV['BASE_DOMAIN']
   end
 
-  conn = Faraday.new(:url => 'http://api.runkeeper.com') do |faraday|
-    faraday.request  :url_encoded             # form-encode POST params
-    faraday.response :logger                  # log requests to STDOUT
-    faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-  end
-  
-  get '/logout' do
-    session[:authenticated] = false
-    redirect '/'
-  end
+  # conn = Faraday.new(:url => 'http://api.runkeeper.com') do |faraday|
+  #   faraday.request  :url_encoded             # form-encode POST params
+  #   faraday.response :logger                  # log requests to STDOUT
+  #   faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+  # end
 
   get '/' do
     if session[:authenticated] != true
@@ -30,10 +25,29 @@ require 'faraday'
       <a href='/auth/runkeeper'>Login with Runkeeper</a>
       "
     else
-      session[:activity]    = conn.get '/fitnessActivities', { :access_token => session[:token] }
-      session[:activity]    = JSON.parse session[:activity].body
-      erb :activity
+      # session[:activity]    = conn.get '/fitnessActivities', { :access_token => session[:token] }
+      # session[:activity]    = JSON.parse session[:activity].body
+      # erb :activity
+      erb '
+      JS Starts here <a href="/logout">Logout</a>
+      <script>
+      var token = "<%= session[:token] %>";
+      $(document).ready(function(){
+        var x = $.ajax({
+          url: "http://api.runkeeper.com/fitnessActivities?access_token="+token,
+          context: document.body
+        }).done(function() {
+          $(".content").html("Call Made" + x.responseText);
+        });
+      });
+      </script>
+      '
     end
+  end
+  
+  get '/logout' do
+    session[:authenticated] = false
+    redirect '/'
   end
   
   get '/auth/:provider/callback' do
@@ -69,7 +83,7 @@ require 'faraday'
          <a href='/logout'>Logout</a>"
   end
   
- 
+
 
 __END__
 
